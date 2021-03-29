@@ -1,0 +1,15 @@
+{
+  "name": "prueba_mediasmart",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "Christian Taidi",
+  "license": "ISC",
+  "dependencies": {
+    "binary-search-tree": "^0.2.6",
+    "redis": "^3.0.2"
+  }
+}
