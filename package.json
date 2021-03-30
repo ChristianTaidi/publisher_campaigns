@@ -9,7 +9,9 @@
   "author": "Christian Taidi",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.21.1",
     "binary-search-tree": "^0.2.6",
+    "express": "^4.17.1",
     "redis": "^3.0.2"
   }
 }
