@@ -24,16 +24,29 @@ app.listen(PORT,()=>{
 app.get("/bid",async (req, res)=>{
 
     let position = req.query.position;
-    let publisherId = req.query.publisherid;
+    let publisherId = req.query.publisherId;
 
     try{
+        let data = [];
+        let bestCampaignId = 0;
         client.hgetall("testcampaigns#",(err,res)=>{
-            let data = [];
+            
             for(value in res){
                 data.push(JSON.parse(res[value]));
             }
             console.log(data);
-        })
+            for(campaign in data){
+                console.log(campaign);
+                console.log(data[campaign]);
+                if(data[campaign].publishers== null || data[campaign].publishers.indexOf(publisherId)!=-1){
+                    if(data[bestCampaignId].cpm<data[campaign].cpm){
+                        bestCampaignId=campaign;
+                    }
+                }
+            }
+        });
+
+        
     }catch(err){
         res.status(500).send({message: err.message});
     }
