@@ -17,6 +17,7 @@ const data=[];
 var publisherSearchTree = new BinarySearchTree();
 var positionSearchTree = new BinarySearchTree();
 
+
 const app = express();
 const PORT = process.env.PORT||3000;
 app.listen(PORT,()=>{
@@ -41,7 +42,10 @@ app.listen(PORT,()=>{
                 publisherSearchTree.insert(entry.publishers[publisherId],entry.id);
             }
             for(position in entry.positions){
-                positionSearchTree.insert(entry.positions[position].position,entry.id);
+                let distance = entry.positions[position].distance;
+                let posValue = entry.positions[position].position
+                for(calcPos=posValue-distance; calcPos<=posValue+distance ; calcPos++)
+                positionSearchTree.insert(calcPos,entry.id);
             }
         }
         //console.log(data);
@@ -54,9 +58,15 @@ app.listen(PORT,()=>{
  */
 app.get("/bid",async (req, res)=>{
 
-    let position = req.query.position;
-    let publisherId = req.query.publisherId;
+    let position = Number(req.query.position);
+    let publisherId = Number(req.query.publisherId);
 
-    let campaigns = publisherSearchTree.search(publisherId);
-    campaigns.
+    let campaignsPub = publisherSearchTree.search(publisherId);
+    let campaignsPos = positionSearchTree.search(position);
+    let campaignsNPub = publisherSearchTree.search(-1);
+    let campaignsNPos =positionSearchTree.search(-1);
+
+    for(campaign in campaigns){
+
+    }
 })
