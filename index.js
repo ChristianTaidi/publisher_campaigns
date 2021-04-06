@@ -1,6 +1,7 @@
 const express = require("express");
 const redis = require('redis');
-
+const BinarySearchTree = require('binary-search-tree').BinarySearchTree;
+AVLTree = require('binary-search-tree').AVLTree;
 /**
  * Redis client init
  */
@@ -12,10 +13,40 @@ client.on("error", (err)=>{
 /**
  * Web server init
  */
+const data=[];
+var publisherSearchTree = new BinarySearchTree();
+var positionSearchTree = new BinarySearchTree();
+
 const app = express();
 const PORT = process.env.PORT||3000;
 app.listen(PORT,()=>{
     console.log(`Server listening on port ${PORT}`)
+    console.log(`Loading data...`)
+    client.hgetall("testcampaigns#",(err,res)=>{
+
+        
+
+        for(value in res){
+            var entry=JSON.parse(res[value])
+            data.push(entry);
+
+            if(entry.publishers == undefined){
+                publisherSearchTree.insert(-1,entry.id);
+            }
+            if(entry.positions == undefined){
+                positionSearchTree.insert(-1,entry.id);
+            }
+
+            for(publisherId in entry.publishers){
+                publisherSearchTree.insert(entry.publishers[publisherId],entry.id);
+            }
+            for(position in entry.positions){
+                positionSearchTree.insert(entry.positions[position].position,entry.id);
+            }
+        }
+        //console.log(data);
+        console.log(`---  Data Loaded  ---`)
+    });
 });
 
 /**
@@ -26,28 +57,6 @@ app.get("/bid",async (req, res)=>{
     let position = req.query.position;
     let publisherId = req.query.publisherId;
 
-    try{
-        let data = [];
-        let bestCampaignId = 0;
-        client.hgetall("testcampaigns#",(err,res)=>{
-            
-            for(value in res){
-                data.push(JSON.parse(res[value]));
-            }
-            console.log(data);
-            for(campaign in data){
-                console.log(campaign);
-                console.log(data[campaign]);
-                if(data[campaign].publishers== null || data[campaign].publishers.indexOf(publisherId)!=-1){
-                    if(data[bestCampaignId].cpm<data[campaign].cpm){
-                        bestCampaignId=campaign;
-                    }
-                }
-            }
-        });
-
-        
-    }catch(err){
-        res.status(500).send({message: err.message});
-    }
+    let campaigns = publisherSearchTree.search(publisherId);
+    campaigns.
 })
